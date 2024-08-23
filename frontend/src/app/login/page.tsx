@@ -16,6 +16,8 @@ export default function LogIn() {
     e.preventDefault();
 
     try {
+
+      // sign in user with email and password
       await signInWithEmailAndPassword(auth, email, password);
       console.log("User signed in successfully");
       Router.push("/");

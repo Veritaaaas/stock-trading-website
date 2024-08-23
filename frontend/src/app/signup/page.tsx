@@ -18,22 +18,30 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // checks if password and confirm password match
     if (password !== confirmPassword) {
       alert("Passwords do not match");
       return;
     }
 
     try {
+
+      // create user with email and password
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+
+      // add user details to firestore
       await setDoc(doc(db, "users", user.uid), {
         firstName: firstName,
         lastName: lastName,
         username: username,
         email: email,
       });
+
+      // redirect to default page
       console.log("User created successfully");
-      Router.push("/login");
+      Router.push("/");
     } 
       catch (error) {
         console.error("Error creating user: ", error);
