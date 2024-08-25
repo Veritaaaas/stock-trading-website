@@ -4,10 +4,13 @@ import { auth } from "./firebase/config.js";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { useEffect } from "react";
+import  Header  from "./components/Header.tsx";
+import Sidebar from "./components/Sidebar.tsx";
 
 export default function Home() {
   const [user] = useAuthState(auth);
   const router = useRouter();
+
 
   // Redirect to login page if user is not logged in
   useEffect(() => {
@@ -31,11 +34,9 @@ export default function Home() {
   };
 
   return (
-    <main className="font-sans">
-      <h2>Index</h2>
-      <button onClick={handleLogout} className="bg-red-500 text-white p-2 rounded">
-        Logout
-      </button>
+    <main className="font-sans bg-[#F5F7F9] h-screen">
+      <Sidebar />
+      <Header />
     </main>
   );
 }
