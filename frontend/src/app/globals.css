@@ -8,3 +8,7 @@
   border-top-left-radius: 2rem;
   border-bottom-left-radius: 2rem;
 }
+
+body {
+  font-family: 'Manrope', sans-serif;
+}

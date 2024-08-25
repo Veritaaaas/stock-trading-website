@@ -34,9 +34,13 @@ export default function Home() {
   };
 
   return (
-    <main className="font-sans bg-[#F5F7F9] h-screen">
-      <Sidebar />
-      <Header />
+    <main className="font-sans bg-[#F5F7F9] h-screen flex gap-2">
+      <div className="w-[300px]">
+        <Sidebar/>
+      </div>
+      <div className="flex-grow">
+        <Header />
+      </div>
     </main>
   );
 }
