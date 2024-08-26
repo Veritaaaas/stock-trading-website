@@ -4,26 +4,24 @@ import { auth } from "./firebase/config.js";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { useEffect } from "react";
-import  Header  from "./components/Header.tsx";
+import Header from "./components/Header.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 import { BiErrorAlt } from "react-icons/bi";
 import dynamic from "next/dynamic";
 
-
 export default function Home() {
-  const [user] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const router = useRouter();
 
   // Redirect to login page if user is not logged in
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       router.push("/login");
     }
-  }, [user, router]);
+  }, [user, loading, router]);
 
   // Logout function
   const handleLogout = async () => {
-
     // sign out user
     try {
       await signOut(auth);
@@ -41,6 +39,10 @@ export default function Home() {
       ssr: false
     }
   )
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <main className="font-sans bg-[#F5F7F9] h-screen flex gap-2">
