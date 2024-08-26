@@ -29,7 +29,7 @@ export default function LogIn() {
   }
 
   return (
-    <div className="grid grid-cols-[55%_45%] min-h-screen">
+    <div className="grid grid-cols-[55%_45%] min-h-screen font-sans">
       <div className="flex flex-col items-center pt-20">
         <Image src="Subtract.svg" alt="Subtract" width={45} height={45} />
         <div className="text-center flex flex-col gap-2 mt-7">
