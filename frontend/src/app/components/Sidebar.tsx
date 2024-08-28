@@ -18,9 +18,9 @@ export default function Sidebar() {
             path: "/"
         },
         {
-            name: "Dashboard",
+            name: "Portfolio",
             icon: <RxDashboard />,
-            path: "/dashboard"
+            path: "/portfolio"
         },
         {
             name: "Wallet",
@@ -40,7 +40,7 @@ export default function Sidebar() {
     ];
 
     return (
-        <div className="bg-white w-full h-screen p-8 flex flex-col gap-8">
+        <div className="bg-white w-full h-screen p-8 flex flex-col gap-8 font-sans">
             <div className="flex justify-center gap-3">
                 <Image src="Subtract.svg" alt="Subtract" width={35} height={35} />
                 <h1 className="text-2xl font-bold text-[#1C1C1C]">GoStock</h1>
