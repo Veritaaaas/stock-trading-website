@@ -6,6 +6,7 @@ import { signOut } from "firebase/auth";
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { BiErrorAlt } from "react-icons/bi";
+import LinearProgress from '@mui/material/LinearProgress';
 
 import Header from "./components/Header.tsx";
 import Sidebar from "./components/Sidebar.tsx";
@@ -45,7 +46,7 @@ export default function Home() {
   )
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LinearProgress />;
   }
 
   return (
@@ -72,6 +73,12 @@ export default function Home() {
                 showChart={true}
                 height={380}
                 width={750}
+                plotLineColorGrowing="#2ff29e"
+                plotLineColorFalling="#2ff29e"
+                belowLineFillColorGrowing="#70f7c2"
+                belowLineFillColorFalling="#70f7c2"
+                belowLineFillColorFallingBottom="#b2fbdc"
+                belowLineFillColorGrowingBottom="#b2fbdc"
               />
             </div>
             <div className="bg-white p-4 mr-6 rounded-2xl mb-4">
