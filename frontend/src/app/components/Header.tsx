@@ -2,14 +2,15 @@
 import Image from "next/image";
 import { VscBell } from "react-icons/vsc";
 import { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import fetchStockList from "../functions/fetchStockList";
 
 export default function Header() {
-
   const [search, setSearch] = useState("");
   const [stockList, setStockList] = useState([]);
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     fetchStockList().then((data) => {
@@ -35,10 +36,17 @@ export default function Header() {
     setShowDropdown(false);
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (search.trim() !== "") {
+      router.push(`/${search}`);
+    }
+  }
+
   return (
     <header className="bg-white px-6 py-4 flex justify-between">
       <div className="relative">
-        <div className="bg-[#F5F7F9] w-fit p-3 flex gap-2 rounded-xl">
+        <form onSubmit={handleSearch} className="bg-[#F5F7F9] w-fit p-3 flex gap-2 rounded-xl">
           <Image src="/icons/search.svg" alt="search" width={20} height={20} />
           <input
             type="text"
@@ -47,7 +55,7 @@ export default function Header() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-        </div>
+        </form>
         {showDropdown && filteredStocks.length > 0 && (
           <ul className="absolute bg-white border border-gray-300 rounded-md mt-2 w-[340px] z-10 max-h-60 overflow-y-auto">
             {filteredStocks.map((stock, index) => (
