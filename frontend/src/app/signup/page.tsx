@@ -1,7 +1,7 @@
 'use client'
 import Image from "next/image";
 import { useState } from "react";
-import { auth, db } from "../firebase/config.js";
+import { auth, db } from "../../firebase/config.js";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
