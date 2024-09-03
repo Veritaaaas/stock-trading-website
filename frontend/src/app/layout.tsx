@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
+import Sidebar from "@/components/Sidebar";
+import Header from "@/components/Header";
+import { UserProvider } from '@/components/UserProvider';
 
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "GoStock",
@@ -14,9 +15,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <UserProvider>
+        <body className="font-sans md:py-0 bg-[#F5F7F9] h-screen flex md:gap-2 flex-col md:flex-row py-16 ">
+          <div className="w-[300px] md:block hidden">
+            <Sidebar/>
+          </div>
+          <div className="flex-grow md:block hidden">
+            <Header />
+            {children}
+          </div>
+          </body>
+      </UserProvider>
     </html>
   );
 }
