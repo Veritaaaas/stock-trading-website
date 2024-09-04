@@ -3,6 +3,7 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { UserProvider } from '@/components/UserProvider';
+import { Toaster } from "@/components/ui/sonner"
 
 
 export const metadata: Metadata = {
@@ -27,7 +28,8 @@ export default function RootLayout({
             <Header />
             {children}
           </div>
-          </body>
+          <Toaster />
+        </body>
       </UserProvider>
     </html>
   );
