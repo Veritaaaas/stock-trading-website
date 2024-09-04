@@ -1,11 +1,13 @@
 'use client'
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase/config.js";
+import { auth } from "@/firebase/config.js";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useUser } from "@/components/UserProvider";
 import dynamic from "next/dynamic";
 import { BiErrorAlt } from "react-icons/bi";
 import LinearProgress from '@mui/material/LinearProgress';
+import TickerCard from '@/components/TickerCard';
 
 const MarketOverviewNoSSR = dynamic(
   () => import('react-ts-tradingview-widgets').then((mod) => mod.MarketOverview),
@@ -17,6 +19,7 @@ const MarketOverviewNoSSR = dynamic(
 export default function Home() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
+  const { userData, portfolioData } = useUser() || {};
 
   useEffect(() => {
     console.log(user);
@@ -34,11 +37,19 @@ export default function Home() {
     <div className="px-6">
       <div className="mt-5 flex flex-col gap-3">
         <h1 className="text-xl font-bold">My Portfolio</h1>
-        <div className="bg-white h-[110px] flex justify-center items-center">
+        <div className="bg-white px-5 rounded-lg">
+          { portfolioData?.length ?? 0 > 0 ? (
+            <div className="flex gap-16">
+              {portfolioData?.map((stock) => (
+                <TickerCard key={stock.symbol} symbol={stock.symbol} numShares={stock.shares}/>
+              ))}
+            </div>
+          ) : (
           <div className="flex items-center gap-3 text-2xl font-bold text-red-500">
             <BiErrorAlt />
             <h1>You Have No Stock Options Yet</h1>
           </div>
+          )}
         </div>
       </div>
       <div className="grid grid-cols-[65%_35%] mt-5 h-[250px] gap-6 pr-4">

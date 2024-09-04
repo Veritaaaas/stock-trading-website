@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { RiHome6Line } from "react-icons/ri";
 import { RxDashboard } from "react-icons/rx";
 import { IoWalletOutline } from "react-icons/io5";
@@ -8,11 +8,13 @@ import { FaRegBookmark } from "react-icons/fa6";
 import { HiOutlineNewspaper } from "react-icons/hi2";
 import { usePathname } from "next/navigation";
 import { useUser } from "./UserProvider";
+import { useState } from "react";
 
 export default function Sidebar() {
 
     const pathname = usePathname();
-    const user = useUser();
+    const { userData, portfolioData } = useUser() || {};
+    const [cashVisible, setCashVisible] = useState(true);
 
     const sidebarItems = [
         {
@@ -42,6 +44,10 @@ export default function Sidebar() {
         },
     ];
 
+    const handleCashVisibility = () => {
+        setCashVisible(!cashVisible);
+    }
+
     return (
         <div className="bg-white w-full h-screen p-8 flex flex-col gap-8 font-sans">
             <div className="flex justify-center gap-3">
@@ -51,8 +57,12 @@ export default function Sidebar() {
             <div className="bg-[#1c1c1c] rounded-xl p-4 flex flex-col gap-2">
                 <h1 className="text-lg text-white">Buying Power</h1>
                 <div className="flex gap-2 items-center">
-                    <h1 className="text-xl text-white font-bold">${user?.cash}</h1>
-                    <FaEye className="text-white" />
+                    <h1 className="text-xl text-white font-bold">
+                        {cashVisible ? `$${userData?.cash ?? 0}` : '••••••'}
+                    </h1>
+                    <button onClick={handleCashVisibility}>
+                        {cashVisible ? <FaEye className="text-white" /> : <FaEyeSlash className="text-white" />}
+                    </button>
                 </div>
             </div>
             <div className="flex flex-col text-[20px] font-bold gap-5">
