@@ -28,4 +28,6 @@ const fetchStockData = async (symbol) => {
   }
 }
 
+
+
 module.exports = fetchStockData;
