@@ -20,6 +20,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
 
     useEffect(() => {
+        console.log(user, 'user');
         const fetchUserData = async () => {
             if (user) {
                 const usersCollectionRef = collection(db, 'users');
