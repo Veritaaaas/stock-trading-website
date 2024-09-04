@@ -1,16 +1,19 @@
 'use client';
 import Image from "next/image";
 import { VscBell } from "react-icons/vsc";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import fetchStockList from "../functions/fetchStockList";
+import { useUser } from "./UserProvider";
 
 export default function Header() {
   const [search, setSearch] = useState("");
   const [stockList, setStockList] = useState([]);
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const user = useUser();
   const router = useRouter();
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     fetchStockList().then((data) => {
@@ -30,6 +33,19 @@ export default function Header() {
       setShowDropdown(true);
     }
   }, [search, stockList]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
 
   const handleSelectStock = (stock) => {
     setSearch(stock);
@@ -57,7 +73,7 @@ export default function Header() {
           />
         </form>
         {showDropdown && filteredStocks.length > 0 && (
-          <ul className="absolute bg-white border border-gray-300 rounded-md mt-2 w-[340px] z-10 max-h-60 overflow-y-auto">
+          <ul ref={dropdownRef} className="absolute bg-white border border-gray-300 rounded-md mt-2 w-[340px] z-10 max-h-60 overflow-y-auto">
             {filteredStocks.map((stock, index) => (
               <li
                 key={index}
@@ -72,7 +88,7 @@ export default function Header() {
       </div>
       <div className="flex gap-4 items-center pr-16">
         <VscBell size={25} />
-        <h1 className="pl-4 border-l-2 border-black text-lg font-bold">Your Username</h1>
+        <h1 className="pl-4 border-l-2 border-black text-lg font-bold">{user?.username}</h1>
       </div>
     </header>
   );
