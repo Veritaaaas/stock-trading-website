@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function StockChart({ data, timeFrame }) {
+export default function StockChart({ data, timeFrame } : { data: number, timeFrame: string }) {
     const [interval, setInterval] = useState(365);
 
     useEffect(() => {
@@ -20,11 +20,7 @@ export default function StockChart({ data, timeFrame }) {
         <ResponsiveContainer width="100%" height="100%">
             <AreaChart
                 data={data}
-                margin={{
-                    top: 0,
-                    right: 0,
-                    left: 0,
-                    bottom: 0,
+                margin={{ right: 20
                 }}
             >
                 <defs>
@@ -40,10 +36,9 @@ export default function StockChart({ data, timeFrame }) {
                     padding={{ left: 20, right: 20 }} 
                 />
                 <YAxis padding={{ top: 20, bottom: 20 }} />
-                <CartesianGrid strokeDasharray="3 3" fillOpacity={0.3} />
+                <CartesianGrid fillOpacity={0.3} />
                 <Tooltip />
                 <Area
-                    type="monotone"
                     dataKey="value"
                     stroke="#0DD66A"
                     fillOpacity={1}
