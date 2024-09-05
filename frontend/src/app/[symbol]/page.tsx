@@ -8,11 +8,12 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useUser } from "@/components/UserProvider";
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import ClearIcon from '@mui/icons-material/Clear';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { Input } from "@/components/ui/input";
 import { db } from "@/firebase/config";
-import { collection, getDocs, query, where, doc, runTransaction } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, runTransaction, deleteDoc, addDoc, Timestamp } from 'firebase/firestore';
 import { FirebaseError } from 'firebase/app';
 
 import {
@@ -42,13 +43,14 @@ export default function SearchResult() {
 
     const api_key = process.env.NEXT_PUBLIC_LOGO_API_KEY;
     const symbol = usePathname().replace("/", "");
-    const { userData: user, portfolioData } = useUser() || {};
+    const { userData, bookmarkData } = useUser() || { userData: null };
     const router = useRouter();
     
     const [data, setData] = useState<StockData[]>([]);
     const [timeSeries, setTimeSeries] = useState([]);
     const [timeFrame, setTimeFrame] = useState('1day');
     const [numShares, setNumShares] = useState(0);
+    const [bookmarked, setBookmarked] = useState(false);
 
     useEffect(() => {
         fetchStockData(symbol).then((data) => {
@@ -63,6 +65,16 @@ export default function SearchResult() {
         });
     }, [timeFrame]);
 
+    useEffect(() => {
+        if (bookmarkData) {
+            console.log(bookmarkData);
+            const bookmarked = bookmarkData.find((bookmark) => bookmark.symbol === symbol);
+            if (bookmarked) {
+                setBookmarked(true);
+            }
+        }
+    }, [bookmarkData, symbol]);
+
     const handleChange = (
         event: React.MouseEvent<HTMLElement>, 
         newTimeFrame: string, 
@@ -72,18 +84,19 @@ export default function SearchResult() {
 
     const handleBuy = async () => {
 
-        if (!user) {
+        if (!userData) {
             toast.error("Please log in to buy shares");
             return;
         }
     
-        if (user?.cash === undefined || user.cash < (data[0]?.price ?? 0) * numShares) {
+        if (userData.cash === undefined || userData.cash < (data[0]?.price ?? 0) * numShares) {
             toast.error("Insufficient funds");
             return;
         }
     
         const userPortfolioRef = collection(db, 'portfolio');
-        const userDocRef = doc(db, 'users', user.uid);
+        const userDocRef = doc(db, 'users', userData.uid);
+        const userHistoryRef = collection(db, 'history');
     
         try {
             if (isNaN(numShares) || numShares <= 0) {
@@ -95,7 +108,7 @@ export default function SearchResult() {
                 return;
             }
     
-            const q = query(userPortfolioRef, where('uid', '==', user.uid), where('symbol', '==', data[0].symbol));
+            const q = query(userPortfolioRef, where('uid', '==', userData.uid), where('symbol', '==', data[0].symbol));
             const querySnapshot = await getDocs(q);
     
             await runTransaction(db, async (transaction) => {
@@ -108,7 +121,7 @@ export default function SearchResult() {
                 } else {
                     const newDocRef = doc(userPortfolioRef);
                     transaction.set(newDocRef, {
-                        uid: user.uid,
+                        uid: userData.uid,
                         symbol: data[0].symbol,
                         name: data[0].name,
                         shares: numShares,
@@ -116,7 +129,18 @@ export default function SearchResult() {
                 }
     
                 transaction.update(userDocRef, {
-                    cash: user.cash - data[0].price * numShares,
+                    cash: userData.cash - data[0].price * numShares,
+                });
+
+                // Add a new document to the history collection
+                await addDoc(userHistoryRef, {
+                    uid: userData.uid,
+                    symbol: data[0].symbol,
+                    name: data[0].name,
+                    shares: numShares,
+                    price: data[0].price,
+                    type: 'buy',
+                    timestamp: Timestamp.fromDate(new Date()),
                 });
             });
     
@@ -132,6 +156,50 @@ export default function SearchResult() {
             }
         }
     }
+
+    const handleBookmark = async () => {
+        if (!userData) {
+            toast.error("Please log in to bookmark stocks");
+            return;
+        }
+    
+        const userBookmarkRef = collection(db, 'bookmark');
+    
+        try {
+            if (!data[0]?.symbol) {
+                toast.error("Invalid stock data");
+                return;
+            }
+    
+            const q = query(userBookmarkRef, where('uid', '==', userData.uid), where('symbol', '==', data[0].symbol));
+            const querySnapshot = await getDocs(q);
+    
+            if (!querySnapshot.empty) {
+                const userDoc = querySnapshot.docs[0];
+                const docRef = userDoc.ref;
+                await deleteDoc(docRef);
+                setBookmarked(false);
+                toast.success("Successfully removed bookmark");
+            } else {
+                await addDoc(userBookmarkRef, {
+                    uid: userData.uid,
+                    symbol: data[0].symbol,
+                    name: data[0].name,
+                });
+                setBookmarked(true);
+                toast.success("Successfully bookmarked stock");
+            }
+    
+        } catch (error) {
+            if (error instanceof FirebaseError) {
+                console.error("Firebase Error:", error);
+                toast.error(error.message);
+            } else {
+                console.error("Unexpected Error:", error);
+                toast.error("An unexpected error occurred. Please try again later.");
+            }
+        }
+    };
 
     return (
         <div className="p-6">
@@ -160,9 +228,9 @@ export default function SearchResult() {
                     </div>
                 </div>
                 <div className="flex gap-4 ">
-                    <Button className="bg-white text-black hover:bg-gray-200">
-                        <AddOutlinedIcon />
-                        <span className="font-sans font-bold">Watchlist</span>
+                    <Button className="bg-white text-black hover:bg-gray-200" onClick={handleBookmark}>
+                        {bookmarked ? <ClearIcon /> : <AddOutlinedIcon /> }
+                        <span className="font-sans font-bold">Bookmark</span>
                     </Button>
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
