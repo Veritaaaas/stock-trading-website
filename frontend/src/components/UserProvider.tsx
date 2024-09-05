@@ -20,9 +20,36 @@ interface PortfolioData {
     shares: number;
 }
 
+interface HistoryData {
+    uid: string;
+    name: string;
+    price: number;
+    shares: number;
+    symbol: string;
+    total: number;
+    transaction: string;
+    date: typeof Date;
+}
+
+interface BookmarkData {
+    uid: string;
+    symbol: string;
+    name: string;
+}
+
+interface PerformanceData {
+    uid: string;
+    portfolioValue: number;
+    date: typeof Date;
+}
+
+
 interface UserContextData {
     userData: UserData | null;
     portfolioData: PortfolioData[] | null;
+    historyData: HistoryData[] | null;
+    bookmarkData: BookmarkData[] | null;
+    performanceData: PerformanceData[] | null;
 }
 
 const UserContext = createContext<UserContextData | null>(null);
@@ -31,11 +58,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user] = useAuthState(auth);
     const [userData, setUserData] = useState<UserData | null>(null);
     const [portfolioData, setPortfolioData] = useState<PortfolioData[] | null>(null);
+    const [historyData, setHistoryData] = useState<HistoryData[] | null>(null);
+    const [bookmarkData, setBookmarkData] = useState<BookmarkData[] | null>(null);
+    const [performanceData, setPerformanceData] = useState<PerformanceData[] | null>(null);
 
     useEffect(() => {
-        console.log(user, 'user');
         let unsubscribeUser: (() => void) | undefined;
         let unsubscribePortfolio: (() => void) | undefined;
+        let unsubscribeHistory: (() => void) | undefined;
+        let unsubscribeBookmark: (() => void) | undefined;
+        let unsubscribePerformance: (() => void) | undefined;
 
         const fetchUserData = async () => {
             if (user) {
@@ -76,8 +108,74 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             }
         };
 
+        const fetchHistoryData = async () => {
+            if (user) {
+                const historyCollectionRef = collection(db, 'history');
+                const q = query(historyCollectionRef, where('uid', '==', user.uid));
+
+                unsubscribeHistory = onSnapshot(q, (querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        const historyData: HistoryData[] = [];
+                        querySnapshot.forEach((doc) => {
+                            historyData.push(doc.data() as HistoryData);
+                        });
+                        setHistoryData(historyData);
+                    } else {
+                        console.log('No history data found');
+                    }
+                }, (error) => {
+                    console.error('Error fetching history data:', error);
+                });
+            }
+        }
+
+        const fetchBookmarkData = async () => {
+            if (user) {
+                const bookmarkCollectionRef = collection(db, 'bookmark');
+                const q = query(bookmarkCollectionRef, where('uid', '==', user.uid));
+
+                unsubscribeBookmark = onSnapshot(q, (querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        const bookmarkData: BookmarkData[] = [];
+                        querySnapshot.forEach((doc) => {
+                            bookmarkData.push(doc.data() as BookmarkData);
+                        });
+                        setBookmarkData(bookmarkData);
+                    } else {
+                        console.log('No bookmark data found');
+                    }
+                }, (error) => {
+                    console.error('Error fetching bookmark data:', error);
+                });
+            }
+        }
+
+        const fetchPerformanceData = async () => {
+            if (user) {
+                const performanceCollectionRef = collection(db, 'performance');
+                const q = query(performanceCollectionRef, where('uid', '==', user.uid));
+
+                unsubscribePerformance = onSnapshot(q, (querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        const performanceData: PerformanceData[] = [];
+                        querySnapshot.forEach((doc) => {
+                            performanceData.push(doc.data() as PerformanceData);
+                        });
+                        setPerformanceData(performanceData);
+                    } else {
+                        console.log('No performance data found');
+                    }
+                }, (error) => {
+                    console.error('Error fetching performance data:', error);
+                });
+            }
+        }
+
         fetchUserData();
         fetchPortfolioData();
+        fetchHistoryData();
+        fetchBookmarkData();
+        fetchPerformanceData();
 
         return () => {
             if (unsubscribeUser) {
@@ -86,11 +184,20 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             if (unsubscribePortfolio) {
                 unsubscribePortfolio();
             }
+            if (unsubscribeHistory) {
+                unsubscribeHistory();
+            }
+            if (unsubscribeBookmark) {
+                unsubscribeBookmark();
+            }
+            if (unsubscribePerformance) {
+                unsubscribePerformance();
+            }
         };
     }, [user]); 
 
     return (
-        <UserContext.Provider value={{ userData, portfolioData }}>
+        <UserContext.Provider value={{ userData, portfolioData, historyData, bookmarkData, performanceData }}>
             {children}
         </UserContext.Provider>
     );
