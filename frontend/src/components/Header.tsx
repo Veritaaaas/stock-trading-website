@@ -11,7 +11,7 @@ export default function Header() {
   const [stockList, setStockList] = useState([]);
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const user = useUser();
+  const { userData } = useUser();
   const router = useRouter();
   const dropdownRef = useRef(null);
 
@@ -88,7 +88,7 @@ export default function Header() {
       </div>
       <div className="flex gap-4 items-center pr-16">
         <VscBell size={25} />
-        <h1 className="pl-4 border-l-2 border-black text-lg font-bold">{user?.username}</h1>
+        <h1 className="pl-4 border-l-2 border-black text-lg font-bold">{userData?.username}</h1>
       </div>
     </header>
   );
