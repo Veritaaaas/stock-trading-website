@@ -10,7 +10,8 @@ export default function TickerCard({ symbol, numShares }: { symbol: string, numS
 
     quote(symbol)
         .then((data: any) => {
-            setPrice(data.c);
+            const price = data.c.toFixed(2);
+            setPrice(price);
         }
     );
 
@@ -20,7 +21,7 @@ export default function TickerCard({ symbol, numShares }: { symbol: string, numS
     }
 
     return (
-        <div className="flex flex-col py-2 w-[150px] gap-2 cursor-pointer" onClick={handleClick}>
+        <div className="flex flex-col py-2 w-1/5 gap-2 cursor-pointer" onClick={handleClick}>
             <div className="flex justify-between w-full items-center max-h-[50px]">
                 <div className="flex items-center gap-2">
                     <Image
@@ -35,11 +36,11 @@ export default function TickerCard({ symbol, numShares }: { symbol: string, numS
             </div>
             <div className="w-full h-[50px] flex flex-col text-sm font-sans text-gray-500 font-semibold">
                 <div className="flex justify-between">
-                    <span>Current Price: </span>
+                    <span>Price: </span>
                     <span className="font-bold text-black">$ {price}</span>
                 </div>
                 <div className="flex justify-between">
-                    <span>Stocks Owned </span>
+                    <span>Owned: </span>
                     <span className="font-bold text-black">{numShares}</span>
                 </div>
             </div>
