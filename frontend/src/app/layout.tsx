@@ -20,11 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <UserProvider>
-        <body className="font-sans md:py-0 bg-[#F5F7F9] h-screen flex md:gap-2 flex-col md:flex-row py-16 ">
+        <body className="font-sans md:py-0 bg-[#F5F7F9] min-h-screen flex md:gap-2 flex-col md:flex-row py-16 ">
           <div className="w-[300px] md:block hidden">
             <Sidebar/>
           </div>
-          <div className="flex-grow md:block hidden">
+          <div className="flex-grow md:block ">
             <Header />
             {children}
           </div>

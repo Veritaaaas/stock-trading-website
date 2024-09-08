@@ -10,6 +10,9 @@ import { BiErrorAlt } from "react-icons/bi";
 import LinearProgress from '@mui/material/LinearProgress';
 import TickerCard from '@/components/TickerCard';
 import BookMarkCard from "@/components/BookMarkCard";
+import StockChart from "@/components/StockChart";
+import { format } from 'date-fns';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const MarketOverviewNoSSR = dynamic(
   () => import('react-ts-tradingview-widgets').then((mod) => mod.MarketOverview),
@@ -17,6 +20,14 @@ const MarketOverviewNoSSR = dynamic(
     ssr: false
   }
 );
+
+const data = [
+  { time: '2021-10-01', value: 100 },
+  { time: '2021-10-02', value: 120 },
+  { time: '2021-10-03', value: 130 },
+  { time: '2021-10-04', value: 140 },
+  { time: '2021-10-05', value: 150 },
+];
 
 export default function Home() {
   const [user, loading] = useAuthState(auth);
@@ -67,20 +78,12 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-[65%_35%] mt-5 h-[250px] gap-6 pr-4">
+      <div className="grid grid-cols-[65%_35%] mt-5 gap-6 pr-4">
         <div className="w-full h-full">
           <h1 className="text-xl font-bold mb-4">Market Overview</h1>
-            <MarketOverviewNoSSR
-              showChart={true}
-              height={305}
-              width={660}
-              plotLineColorGrowing="#46B49E"
-              plotLineColorFalling="#46B49E"
-              belowLineFillColorFalling="rgba(70, 180, 158, 0)"
-              belowLineFillColorGrowing="rgba(70, 180, 158, 0.12)"
-              belowLineFillColorFallingBottom="rgba(70, 190, 158, 1)"
-              belowLineFillColorGrowingBottom="rgba(70, 190, 158, 0.08)"
-            />
+            <div className="h-[350px] w-30 bg-white pt-4">
+
+            </div>
         </div>
         <div className="bg-white p-4 rounded-2xl">
           <h1 className="text-xl font-bold">My Bookmarks</h1>

@@ -9,6 +9,7 @@ import { HiOutlineNewspaper } from "react-icons/hi2";
 import { usePathname } from "next/navigation";
 import { useUser } from "./UserProvider";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Sidebar() {
 
@@ -49,7 +50,7 @@ export default function Sidebar() {
     }
 
     return (
-        <div className="bg-white w-full h-screen p-8 flex flex-col gap-8 font-sans">
+        <div className="bg-white w-full min-h-screen p-8 flex flex-col gap-8 font-sans h-[100%]">
             <div className="flex justify-center gap-3">
                 <Image src="/Subtract.svg" alt="Subtract" width={35} height={35} /> 
                 <h1 className="text-2xl font-bold text-[#1C1C1C]">GoStock</h1>
@@ -67,10 +68,12 @@ export default function Sidebar() {
             </div>
             <div className="flex flex-col text-[20px] font-bold gap-5">
                 {sidebarItems.map((item, index) => (
-                    <div key={index} className={`flex gap-3 items-center px-2 cursor-pointer hover:bg-[#d9d9d9] rounded-lg ${pathname === item.path ? "bg-[#1c1c1c] text-white" : ""}`}>
-                        {item.icon}
-                        <h1>{item.name}</h1>
-                    </div>
+                    <Link href={item.path} key={index}>
+                        <div key={index} className={`flex gap-3 items-center px-2 cursor-pointer hover:bg-[#d9d9d9] rounded-lg ${pathname === item.path ? "bg-[#1c1c1c] text-white" : ""}`}>
+                            {item.icon}
+                            <h1>{item.name}</h1>
+                        </div>
+                    </Link>
                 ))}
             </div>
         </div>

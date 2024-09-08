@@ -303,7 +303,7 @@ export default function SearchResult() {
                     <ToggleButton value="1month">Monthly</ToggleButton>
                 </ToggleButtonGroup>
                     
-                <div className="mt-6 w-full bg-white py-6 px-2 rounded-lg h-[250px]">
+                <div className="mt-6 w-full bg-white py-6 px-4 rounded-lg h-[250px]">
                     <StockChart data={timeSeries} timeFrame={timeFrame} />
                 </div>
             </div>
