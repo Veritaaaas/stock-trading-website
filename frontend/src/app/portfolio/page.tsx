@@ -1,33 +1,75 @@
-import StockChart  from "../../components/StockChart";
-import Image from "next/image";
-
-const sampleData = [
-    { time: '2018-12-22', value: 32.51 },
-    { time: '2018-12-23', value: 31.11 },
-    { time: '2018-12-24', value: 27.02 },
-    { time: '2018-12-25', value: 27.32 },
-    { time: '2018-12-26', value: 25.17 },
-    { time: '2018-12-27', value: 28.89 },
-    { time: '2018-12-28', value: 25.46 },
-    { time: '2018-12-29', value: 23.92 },
-    { time: '2018-12-30', value: 22.68 },
-    { time: '2018-12-31', value: 22.67 },
-];
-
-const chartColors = {
-  backgroundColor: 'white',
-  lineColor: '#2962FF',
-  textColor: 'black',
-  areaTopColor: '#2962FF',
-  areaBottomColor: 'rgba(41, 98, 255, 0.28)',
-};
+import { BarChart3Icon, DollarSignIcon, LineChartIcon, PieChartIcon } from "lucide-react";
+import StatCard from "@/components/StatCard";
+import StockPieChart from "@/components/PieChart";
+import PortfolioTable from "./PortfolioTable";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 
 export default function Portfolio() {
+
+  const statCardsData = [
+    {
+      title: "Total Portfolio Value",
+      icon: <DollarSignIcon className="w-4 h-4 text-muted-foreground" />,
+      value: "$124,750.50",
+      description: "+2.5% from last month",
+    },
+    {
+      title: "Today's Gain/Loss",
+      icon: <LineChartIcon className="w-4 h-4 text-muted-foreground" />,
+      value: "+$1,250.75",
+      description: "+1.01% today",
+      valueClassName: "text-green-600",
+    },
+    {
+      title: "Open Positions",
+      icon: <BarChart3Icon className="w-4 h-4 text-muted-foreground" />,
+      value: "15",
+      description: "Across 12 companies",
+    },
+    {
+      title: "Cash Balance",
+      icon: <PieChartIcon className="w-4 h-4 text-muted-foreground" />,
+      value: "$15,242.30",
+      description: "Available for trading",
+    },
+  ];
+
   return (
-    <div>
-      <h1>Portfolio</h1>
-      <StockChart data={sampleData} colors={chartColors} />
-      <img src="https://img.logo.dev/ticker/ESTC?token=pk_Is4c7FZtRNaPVHt0pldwqA" alt="" />
+    <div className="p-4">
+      <div className="flex gap-4">
+        <div className="w-[70%]">
+          <div className="grid gap-4 md:grid-cols-2">
+            {statCardsData.map((card, index) => (
+              <StatCard
+                key={index}
+                title={card.title}
+                icon={card.icon}
+                value={card.value}
+                description={card.description}
+                valueClassName={card.valueClassName}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="w-[30%]">
+          <Card className="w-full h-full">
+            <CardHeader className="pb-0 max-h-fit">
+              <CardTitle className="text-md font-bold text-center">Portfolio Distribution</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 pt-2 pb-0">
+              <div className="w-full h-[190px]">
+                <StockPieChart />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle className="font-sans font-bold text-lg">Portfolio Table</CardTitle>
+        </CardHeader>
+        <CardContent><PortfolioTable/></CardContent>
+      </Card>
     </div>
   );
 }
