@@ -63,7 +63,7 @@ export default function SearchResult() {
             setTimeSeries(data);
             console.log(data);
         });
-    }, [timeFrame]);
+    }, [timeFrame, symbol]);
 
     useEffect(() => {
         if (bookmarkData) {
@@ -257,8 +257,8 @@ export default function SearchResult() {
                     <thead>
                     <tr className="min-w-full text-bold text-xl">
                         <th className="px-4 py-2">Current Volume</th>
-                        <th className="px-4 py-2">Day's High</th>
-                        <th className="px-4 py-2">Day's Low</th>
+                        <th className="px-4 py-2">Day&apos;s High</th>
+                        <th className="px-4 py-2">Day&apos; Low</th>
                         <th className="px-4 py-2">Previous Close</th>
                         <th className="px-4 py-2">Change Percent</th>
                     </tr>

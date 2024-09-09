@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function StockChart({ data, timeFrame='1day' } : { data: any, timeFrame: string }) {
+export default function StockChart({ data, timeFrame } : { data: any, timeFrame: string }) {
     const [interval, setInterval] = useState(365);
 
     useEffect(() => {

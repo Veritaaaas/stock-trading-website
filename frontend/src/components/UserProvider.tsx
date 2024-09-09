@@ -4,6 +4,7 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase/config"; 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { Timestamp } from 'firebase/firestore';
 
 interface UserData {
     uid: string;
@@ -27,8 +28,8 @@ interface HistoryData {
     shares: number;
     symbol: string;
     total: number;
-    transaction: string;
-    date: typeof Date;
+    type: string;
+    timestamp: Timestamp; 
 }
 
 interface BookmarkData {
@@ -40,9 +41,8 @@ interface BookmarkData {
 interface PerformanceData {
     uid: string;
     portfolioValue: number;
-    date: typeof Date;
+    date: Timestamp; // Corrected type
 }
-
 
 interface UserContextData {
     userData: UserData | null;

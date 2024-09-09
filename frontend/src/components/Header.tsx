@@ -5,13 +5,13 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import fetchStockList from "../functions/fetchStockList";
 import { useUser } from "./UserProvider";
+import { auth } from "@/firebase/config"; // Import the Firebase auth object
 
 export default function Header() {
   const [search, setSearch] = useState("");
-  const [stockList, setStockList] = useState([]);
+  const [stockList, setStockList] = useState<string[]>([]);
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const { userData } = useUser();
   const router = useRouter();
   const dropdownRef = useRef(null);
 
@@ -29,14 +29,14 @@ export default function Header() {
       const filtered = stockList.filter(stock =>
         stock.toLowerCase().startsWith(search.toLowerCase())
       );
-      setFilteredStocks(filtered);
+      setFilteredStocks(filtered as never[]);
       setShowDropdown(true);
     }
   }, [search, stockList]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !(dropdownRef.current as HTMLElement).contains(event.target as Node)) {
         setShowDropdown(false);
       }
     };
@@ -47,17 +47,26 @@ export default function Header() {
     };
   }, [dropdownRef]);
 
-  const handleSelectStock = (stock) => {
+  const handleSelectStock = (stock : string) => {
     setSearch(stock);
     setShowDropdown(false);
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (search.trim() !== "") {
       router.push(`/${search}`);
     }
   }
+
+  const handleSignOut = async () => {
+    try {
+      await auth.signOut();
+      router.push("/login"); // Redirect to login page after sign out
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   return (
     <header className="bg-white px-6 py-4 flex justify-between">
@@ -88,7 +97,7 @@ export default function Header() {
       </div>
       <div className="flex gap-4 items-center pr-16">
         <VscBell size={25} />
-        <h1 className="pl-4 border-l-2 border-black text-lg font-bold">{userData?.username}</h1>
+        <h1 className="pl-4 border-l-2 border-black text-lg font-bold cursor-pointer" onClick={handleSignOut}>Sign Out</h1>
       </div>
     </header>
   );

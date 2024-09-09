@@ -1,11 +1,7 @@
 const api_key = process.env.NEXT_PUBLIC_TWELVE_DATA_API_KEY;
 
-if (!api_key) {
-    console.error('API key is not set. Please set the NEXT_PUBLIC_RAPIDAPI_KEY environment variable.');
-}
-
 const fetchTimeSeries = async (symbol, interval) => {
-    const url = `https://twelve-data1.p.rapidapi.com/time_series?outputsize=5000&symbol=${symbol}&interval=${interval}&format=json`;
+    const url = `https://twelve-data1.p.rapidapi.com/time_series?outputsize=3000&symbol=${symbol}&interval=${interval}&format=json`;
     const options = {
         method: 'GET',
         headers: {

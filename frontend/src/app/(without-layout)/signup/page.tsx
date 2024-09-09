@@ -1,52 +1,59 @@
 'use client'
 import Image from "next/image";
-import { useState } from "react";
-import { auth, db } from "../../firebase/config.js";
+import { useState, FormEvent } from "react";
+import { auth, db } from "@/firebase/config.js";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
 export default function SignUp() {
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const Router = useRouter();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    // checks if password and confirm password match
+    // Basic form validation
+    if (!firstName || !lastName || !username || !email || !password || !confirmPassword) {
+      setError("All fields are required");
+      return;
+    }
+
+    // Check if password and confirm password match
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
     try {
-
-      // create user with email and password
+      // Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // add user details to firestore
+      // Add user details to Firestore
       await setDoc(doc(db, "users", user.uid), {
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
+        uid: user.uid,
+        firstName,
+        lastName,
+        username,
+        email,
+        cash: 10000,
       });
 
-      // redirect to default page
+      // Redirect to default page
       console.log("User created successfully");
       Router.push("/");
-    } 
-      catch (error) {
-        console.error("Error creating user: ", error);
+    } catch (error) {
+      console.log("Error creating user: ", error);
+      setError("Error creating user" + error);
     }
-  }
+  };
 
   return (
     <div className="grid grid-cols-[55%_45%] min-h-screen font-sans">
@@ -57,43 +64,68 @@ export default function SignUp() {
           <p className="text-sm font-medium text-[#6F6F6F]">Welcome! Please enter your details</p>
         </div>
         <form className="flex flex-col gap-1 mt-7" onSubmit={handleSubmit}>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
           <div className="flex gap-16">
             <div className="flex flex-col gap-1">
               <label htmlFor="firstName" className="text-m font-medium text-[#1C1C1C]">First Name</label>
-              <input type="text" id="firstName" className="p-2 border border-[#1C1C1C] rounded-md" 
-                onChange={(e) => setFirstName(e.target.value)} 
-                value={firstName}/>
+              <input
+                type="text"
+                id="firstName"
+                className="p-2 border border-[#1C1C1C] rounded-md"
+                onChange={(e) => setFirstName(e.target.value)}
+                value={firstName}
+              />
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="lastName" className="text-m font-medium text-[#1C1C1C]">Last Name</label>
-              <input type="text" id="lastName" className="p-2 border border-[#1C1C1C] rounded-md" 
+              <input
+                type="text"
+                id="lastName"
+                className="p-2 border border-[#1C1C1C] rounded-md"
                 onChange={(e) => setLastName(e.target.value)}
-                value={lastName}/>
+                value={lastName}
+              />
             </div>
           </div>
           <div className="flex flex-col gap-1">
             <label htmlFor="username" className="text-m font-medium text-[#1C1C1C]">Username</label>
-            <input type="text" id="username" className="p-2 border border-[#1C1C1C] rounded-md" 
-            onChange={(e) => setUsername(e.target.value)}
-            value={username}/>
+            <input
+              type="text"
+              id="username"
+              className="p-2 border border-[#1C1C1C] rounded-md"
+              onChange={(e) => setUsername(e.target.value)}
+              value={username}
+            />
           </div>
           <div className="flex flex-col gap-1">
             <label htmlFor="email" className="text-m font-medium text-[#1C1C1C]">Email</label>
-            <input type="email" id="email" className="p-2 border border-[#1C1C1C] rounded-md" 
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}/>
+            <input
+              type="email"
+              id="email"
+              className="p-2 border border-[#1C1C1C] rounded-md"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+            />
           </div>
           <div className="flex flex-col gap-1">
             <label htmlFor="password" className="text-m font-medium text-[#1C1C1C]">Password</label>
-            <input type="password" id="password" className="p-2 border border-[#1C1C1C] rounded-md" 
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}/>
+            <input
+              type="password"
+              id="password"
+              className="p-2 border border-[#1C1C1C] rounded-md"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+            />
           </div>
           <div className="flex flex-col gap-1">
             <label htmlFor="confirmPassword" className="text-m font-medium text-[#1C1C1C]">Confirm Password</label>
-            <input type="password" id="confirmPassword" className="p-2 border border-[#1C1C1C] rounded-md" 
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            value={confirmPassword}/>
+            <input
+              type="password"
+              id="confirmPassword"
+              className="p-2 border border-[#1C1C1C] rounded-md"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={confirmPassword}
+            />
           </div>
           <button type="submit" className="bg-[#1C1C1C] text-white font-medium text-lg rounded-xl p-2 mt-4">Create Account</button>
           <p className="text-xs font-medium text-[#6F6F6F] text-center mt-4">By logging in, you agree to follow our <span className="text-[#007AFF]">terms and service</span></p>

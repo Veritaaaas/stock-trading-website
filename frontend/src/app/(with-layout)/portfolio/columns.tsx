@@ -9,6 +9,7 @@ import { collection, getDocs, query, where, doc, runTransaction, Timestamp } fro
 import { ArrowUpDown } from "lucide-react"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
 
 import {
   AlertDialog,
@@ -176,7 +177,7 @@ function SellCell({ row } : { row: any }) {
       return true;
     } catch (error) {
       console.error("Error in handleSell:", error);
-      toast.error(error.message || "An error occurred while processing the sale");
+      toast.error((error as Error).message || "An error occurred while processing the sale");
       return false;
     }
   };
@@ -192,7 +193,7 @@ function SellCell({ row } : { row: any }) {
         <AlertDialogTitle>Sell {row.original.name}</AlertDialogTitle>
         <AlertDialogDescription>
           How many shares of {row.original.name} would you like to sell?
-          <input type="number" min='0' value={numShares} onChange={(e) => setNumShares(Number(e.target.value))} className="mt-2"/>
+          <Input type="number" min='0' value={numShares} onChange={(e) => setNumShares(Number(e.target.value))} className="mt-2"/>
         </AlertDialogDescription>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>

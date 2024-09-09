@@ -24,7 +24,7 @@ export default function BookMarkCard({ symbol, name } : { symbol: String, name: 
     }
 
     return (
-        <div className="flex px-2 py-4 border-gray-100 border-b-2 gap-3  " onClick={handleClick}>
+        <div className="flex px-2 py-4 border-gray-100 border-b-2 gap-3 cursor-pointer" onClick={handleClick}>
             <Image
                 src={`https://img.logo.dev/ticker/${String(symbol)}?token=${String(api_key)}`}
                 alt="Logo"

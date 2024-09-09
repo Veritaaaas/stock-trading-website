@@ -2,7 +2,7 @@ import { BarChart3Icon, DollarSignIcon, LineChartIcon, PieChartIcon } from "luci
 import StatCard from "@/components/StatCard";
 import StockPieChart from "@/components/PieChart";
 import PortfolioTable from "./PortfolioTable";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function Portfolio() {
 
@@ -38,7 +38,7 @@ export default function Portfolio() {
     <div className="p-4">
       <div className="flex gap-4">
         <div className="w-[70%]">
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2 h-[250px]">
             {statCardsData.map((card, index) => (
               <StatCard
                 key={index}
@@ -66,7 +66,8 @@ export default function Portfolio() {
       </div>
       <Card className="mt-8">
         <CardHeader>
-          <CardTitle className="font-sans font-bold text-lg">Portfolio Table</CardTitle>
+          <CardTitle className="font-sans font-bold text-lg">Current Holdings</CardTitle>
+          <CardDescription>Your currently owned stocks</CardDescription>
         </CardHeader>
         <CardContent><PortfolioTable/></CardContent>
       </Card>
