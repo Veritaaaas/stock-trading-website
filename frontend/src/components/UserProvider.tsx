@@ -5,6 +5,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase/config"; 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Timestamp } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 
 interface UserData {
     uid: string;
@@ -56,6 +57,7 @@ const UserContext = createContext<UserContextData | null>(null);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user] = useAuthState(auth);
+    const router = useRouter();
     const [userData, setUserData] = useState<UserData | null>(null);
     const [portfolioData, setPortfolioData] = useState<PortfolioData[] | null>(null);
     const [historyData, setHistoryData] = useState<HistoryData[] | null>(null);
@@ -196,7 +198,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }, [user]); 
 
+    useEffect(() => {
+        if (!user) {
+          router.push("/login");
+        }
+      }, [user, router]);
+    
+
     return (
+
         <UserContext.Provider value={{ userData, portfolioData, historyData, bookmarkData, performanceData }}>
             {children}
         </UserContext.Provider>
@@ -205,6 +215,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useUser = () => {
     const context = useContext(UserContext);
+
+
     if (context === undefined) {
         throw new Error('useUser must be used within a UserProvider');
     }
