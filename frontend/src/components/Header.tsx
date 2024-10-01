@@ -1,14 +1,22 @@
 'use client';
-import Image from "next/image";
-import { VscBell } from "react-icons/vsc";
+import { ExitIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import fetchStockList from "../functions/fetchStockList";
+import { auth } from "@/firebase/config"; 
 import { useUser } from "./UserProvider";
-import { auth } from "@/firebase/config"; // Import the Firebase auth object
+
+interface UserData {
+  uid: string;
+  username: string;
+  cash: number;
+  firstName: string;
+  lastName: string;
+}
 
 export default function Header() {
   const [search, setSearch] = useState("");
+  const { userData } = useUser() as { userData: UserData };
   const [stockList, setStockList] = useState<string[]>([]);
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -69,16 +77,16 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white px-6 py-4 flex justify-between">
+    <header className="bg-white px-6 py-4 justify-between hidden md:flex">
       <div className="relative">
-        <form onSubmit={handleSearch} className="bg-[#F5F7F9] w-fit p-3 flex gap-2 rounded-xl">
-          <Image src="/icons/search.svg" alt="search" width={20} height={20} />
+        <form onSubmit={handleSearch} className="bg-[#F5F7F9] w-fit p-3 flex items-center gap-2 rounded-xl">
+          <MagnifyingGlassIcon className="w-6 h-6" />
           <input
             type="text"
-            placeholder="Search for various stocks"
-            className="bg-[#F5F7F9] border-none outline-none ml-2 w-[340px]"
+            placeholder="Search for stocks"
+            className="bg-[#F5F7F9] border-none outline-none lg:w-64 active:border-none"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
           />
         </form>
         {showDropdown && filteredStocks.length > 0 && (
@@ -95,9 +103,9 @@ export default function Header() {
           </ul>
         )}
       </div>
-      <div className="flex gap-4 items-center pr-16">
-        <VscBell size={25} />
-        <h1 className="pl-4 border-l-2 border-black text-lg font-bold cursor-pointer" onClick={handleSignOut}>Sign Out</h1>
+      <div className="flex gap-4 items-center lg:pr-16">
+        <ExitIcon className="w-6 h-6 cursor-pointer" onClick={handleSignOut} />
+        <h1 className="pl-4 border-l-2 border-black text-lg font-bold cursor-pointer">{userData?.username}</h1>
       </div>
     </header>
   );

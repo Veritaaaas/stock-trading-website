@@ -56,7 +56,7 @@ interface UserContextData {
 const UserContext = createContext<UserContextData | null>(null);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user] = useAuthState(auth);
+    const [user, loading, error] = useAuthState(auth);
     const router = useRouter();
     const [userData, setUserData] = useState<UserData | null>(null);
     const [portfolioData, setPortfolioData] = useState<PortfolioData[] | null>(null);
@@ -65,6 +65,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [performanceData, setPerformanceData] = useState<PerformanceData[] | null>(null);
 
     useEffect(() => {
+        if (loading) return; 
+        if (!user) {
+            router.push("/login");
+        }
+    }, [user, loading, router]);
+
+    useEffect(() => {
+        if (!user) return;
+
         let unsubscribeUser: (() => void) | undefined;
         let unsubscribePortfolio: (() => void) | undefined;
         let unsubscribeHistory: (() => void) | undefined;
@@ -72,105 +81,95 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         let unsubscribePerformance: (() => void) | undefined;
 
         const fetchUserData = async () => {
-            if (user) {
-                const usersCollectionRef = collection(db, 'users');
-                const q = query(usersCollectionRef, where('uid', '==', user.uid)); 
+            const usersCollectionRef = collection(db, 'users');
+            const q = query(usersCollectionRef, where('uid', '==', user.uid)); 
 
-                unsubscribeUser = onSnapshot(q, (querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        const userDoc = querySnapshot.docs[0];
-                        setUserData(userDoc.data() as UserData);
-                    } else {
-                        console.log('No user document found');
-                    }
-                }, (error) => {
-                    console.error('Error fetching user data:', error);
-                });
-            }
+            unsubscribeUser = onSnapshot(q, (querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    const userDoc = querySnapshot.docs[0];
+                    setUserData(userDoc.data() as UserData);
+                } else {
+                    console.log('No user document found');
+                }
+            }, (error) => {
+                console.error('Error fetching user data:', error);
+            });
         };
 
         const fetchPortfolioData = async () => {
-            if (user) {
-                const portfolioCollectionRef = collection(db, 'portfolio');
-                const q = query(portfolioCollectionRef, where('uid', '==', user.uid)); 
+            const portfolioCollectionRef = collection(db, 'portfolio');
+            const q = query(portfolioCollectionRef, where('uid', '==', user.uid)); 
 
-                unsubscribePortfolio = onSnapshot(q, (querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        const portfolioData: PortfolioData[] = [];
-                        querySnapshot.forEach((doc) => {
-                            portfolioData.push(doc.data() as PortfolioData);
-                        });
-                        setPortfolioData(portfolioData);
-                    } else {
-                        console.log('No portfolio data found');
-                    }
-                }, (error) => {
-                    console.error('Error fetching portfolio data:', error);
-                });
-            }
+            unsubscribePortfolio = onSnapshot(q, (querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    const portfolioData: PortfolioData[] = [];
+                    querySnapshot.forEach((doc) => {
+                        portfolioData.push(doc.data() as PortfolioData);
+                    });
+                    setPortfolioData(portfolioData);
+                } else {
+                    console.log('No portfolio data found');
+                }
+            }, (error) => {
+                console.error('Error fetching portfolio data:', error);
+            });
         };
 
         const fetchHistoryData = async () => {
-            if (user) {
-                const historyCollectionRef = collection(db, 'history');
-                const q = query(historyCollectionRef, where('uid', '==', user.uid));
+            const historyCollectionRef = collection(db, 'history');
+            const q = query(historyCollectionRef, where('uid', '==', user.uid));
 
-                unsubscribeHistory = onSnapshot(q, (querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        const historyData: HistoryData[] = [];
-                        querySnapshot.forEach((doc) => {
-                            historyData.push(doc.data() as HistoryData);
-                        });
-                        setHistoryData(historyData);
-                    } else {
-                        console.log('No history data found');
-                    }
-                }, (error) => {
-                    console.error('Error fetching history data:', error);
-                });
-            }
+            unsubscribeHistory = onSnapshot(q, (querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    const historyData: HistoryData[] = [];
+                    querySnapshot.forEach((doc) => {
+                        historyData.push(doc.data() as HistoryData);
+                    });
+                    setHistoryData(historyData);
+                } else {
+                    console.log('No history data found');
+                }
+            }, (error) => {
+                console.error('Error fetching history data:', error);
+            });
         }
 
         const fetchBookmarkData = async () => {
-            if (user) {
-                const bookmarkCollectionRef = collection(db, 'bookmark');
-                const q = query(bookmarkCollectionRef, where('uid', '==', user.uid));
+            const bookmarkCollectionRef = collection(db, 'bookmark');
+            const q = query(bookmarkCollectionRef, where('uid', '==', user.uid));
 
-                unsubscribeBookmark = onSnapshot(q, (querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        const bookmarkData: BookmarkData[] = [];
-                        querySnapshot.forEach((doc) => {
-                            bookmarkData.push(doc.data() as BookmarkData);
-                        });
-                        setBookmarkData(bookmarkData);
-                    } else {
-                        console.log('No bookmark data found');
-                    }
-                }, (error) => {
-                    console.error('Error fetching bookmark data:', error);
-                });
-            }
+            unsubscribeBookmark = onSnapshot(q, (querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    const bookmarkData: BookmarkData[] = [];
+                    querySnapshot.forEach((doc) => {
+                        bookmarkData.push(doc.data() as BookmarkData);
+                    });
+                    setBookmarkData(bookmarkData);
+                } else {
+                    console.log('No bookmark data found');
+                }
+            }, (error) => {
+                console.error('Error fetching bookmark data:', error);
+            });
         }
 
         const fetchPerformanceData = async () => {
-            if (user) {
-                const performanceCollectionRef = collection(db, 'performance');
-                const q = query(performanceCollectionRef, where('uid', '==', user.uid));
+            const performanceCollectionRef = collection(db, 'performance');
+            const q = query(performanceCollectionRef, where('uid', '==', user.uid));
 
-                unsubscribePerformance = onSnapshot(q, (querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        const performanceData: PerformanceData[] = [];
-                        querySnapshot.forEach((doc) => {
-                            performanceData.push(doc.data() as PerformanceData);
-                        });
-                        setPerformanceData(performanceData);
-                    } else {
-                        console.log('No performance data found');
-                    }
-                }, (error) => {
-                    console.error('Error fetching performance data:', error);
-                });
-            }
+            unsubscribePerformance = onSnapshot(q, (querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    const performanceData: PerformanceData[] = [];
+                    querySnapshot.forEach((doc) => {
+                        performanceData.push(doc.data() as PerformanceData);
+                    });
+                    setPerformanceData(performanceData);
+                } else {
+                    console.log('No performance data found');
+                }
+            }, (error) => {
+                console.error('Error fetching performance data:', error);
+            });
         }
 
         fetchUserData();
@@ -180,33 +179,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         fetchPerformanceData();
 
         return () => {
-            if (unsubscribeUser) {
-                unsubscribeUser();
-            }
-            if (unsubscribePortfolio) {
-                unsubscribePortfolio();
-            }
-            if (unsubscribeHistory) {
-                unsubscribeHistory();
-            }
-            if (unsubscribeBookmark) {
-                unsubscribeBookmark();
-            }
-            if (unsubscribePerformance) {
-                unsubscribePerformance();
-            }
+            if (unsubscribeUser) unsubscribeUser();
+            if (unsubscribePortfolio) unsubscribePortfolio();
+            if (unsubscribeHistory) unsubscribeHistory();
+            if (unsubscribeBookmark) unsubscribeBookmark();
+            if (unsubscribePerformance) unsubscribePerformance();
         };
     }, [user]); 
 
-    useEffect(() => {
-        if (!user) {
-          router.push("/login");
-        }
-      }, [user, router]);
-    
-
     return (
-
         <UserContext.Provider value={{ userData, portfolioData, historyData, bookmarkData, performanceData }}>
             {children}
         </UserContext.Provider>
@@ -214,9 +195,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 }
 
 export const useUser = () => {
-    const context = useContext(UserContext);
-
-
+    const context = useContext(UserContext); 
     if (context === undefined) {
         throw new Error('useUser must be used within a UserProvider');
     }

@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import MobileHeader from "@/components/MobileHeader";
+import BottomBar from "@/components/BottomBar";
 import { UserProvider } from '@/components/UserProvider';
 import { Toaster } from "@/components/ui/sonner"
+import Link from "next/link";
 
 
 export const metadata: Metadata = {
@@ -20,17 +23,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <UserProvider>
-        <body className="font-sans md:py-0 bg-[#F5F7F9] min-h-screen flex md:gap-2 flex-col md:flex-row py-16 ">
+        <body className="font-sans md:py-0 bg-[#F5F7F9] h-full lg:min-h-screen flex md:gap-2 flex-col md:flex-row pt-16 pb-24">
           <div className="w-[300px] md:block hidden">
             <Sidebar/>
           </div>
-          <div className="flex-grow md:block ">
+          <div className="flex-grow ">
             <Header />
+            <MobileHeader />
             {children}
+            <footer className="text-center mt-8"><a href="https://logo.dev" className="text-xs mt-8">Logos provided by Logo.dev</a></footer>
+            <BottomBar />
           </div>
           <Toaster />
         </body>
       </UserProvider>
+
     </html>
   );
 }

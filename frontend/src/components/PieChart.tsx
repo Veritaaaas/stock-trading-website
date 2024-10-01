@@ -51,9 +51,15 @@ const CustomTooltip = ({ active, payload }: { active: boolean, payload: any[] })
   return null;
 };
 
-export default function StockPieChart() {
+interface PortfolioData {
+  uid: string;
+  symbol: string;
+  name: string;
+  shares: number;
+}
 
-  const { portfolioData } = useUser() || {};
+export default function StockPieChart({portfolioData} : {portfolioData: PortfolioData[]}) {
+
   const [colors, setColors] = useState<string[]>([]);
   const [pieChartData, setPieChartData] = useState<{ name: string; value: number; }[]>([]);
 

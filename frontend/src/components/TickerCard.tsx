@@ -21,7 +21,7 @@ export default function TickerCard({ symbol, numShares }: { symbol: string, numS
     }
 
     return (
-        <div className="flex flex-col py-2 w-1/5 gap-2 cursor-pointer" onClick={handleClick}>
+        <div className="flex flex-col py-2 gap-2 cursor-pointer" onClick={handleClick}>
             <div className="flex justify-between w-full items-center max-h-[50px]">
                 <div className="flex items-center gap-2">
                     <Image
@@ -31,7 +31,7 @@ export default function TickerCard({ symbol, numShares }: { symbol: string, numS
                         width={45}
                         height={45}
                     />
-                    <span className="font-sans font-bold text-xl">{symbol}</span>
+                    <span className="font-sans font-bold md:text-xl">{symbol}</span>
                 </div>
             </div>
             <div className="w-full h-[50px] flex flex-col text-sm font-sans text-gray-500 font-semibold">

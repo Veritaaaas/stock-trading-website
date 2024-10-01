@@ -38,7 +38,7 @@ export default function BookMarkCard({ symbol, name } : { symbol: String, name: 
                     <span>${price}</span>
                 </div>
                 <div className="flex justify-between w-full items-center font-sans text-sm text-gray-400">
-                    <span>{name}</span>
+                    <span className="md:w-44">{name}</span>
                     <span className={`font-bold text-md ${percentChange < 0 ? 'text-red-500' : 'text-green-500'}`}>
                         {percentChange}%
                     </span>

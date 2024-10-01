@@ -26,6 +26,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, icon, value, description, va
       </CardHeader>
       <CardContent>
         <div className={`text-2xl font-bold ${valueClassName}`}>{value}</div>
+        <CardDescription>{description}</CardDescription>
       </CardContent>
     </Card>
   );

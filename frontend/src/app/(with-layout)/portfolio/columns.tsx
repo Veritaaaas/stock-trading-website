@@ -101,7 +101,7 @@ function NameCell({ row } : { row: any }) {
   }
 
   return (
-    <div className="flex items-center space-x-2 cursor-pointer" onClick={handleClick}>
+    <div className="flex items-center space-x-2 cursor-pointer min-w-48 " onClick={handleClick}>
       <Image
         src={`https://img.logo.dev/ticker/${String(row.original.symbol)}?token=${String(api_key)}`}
         alt={row.original.symbol}
